@@ -1,0 +1,652 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>АКТ-Платформа — Интерактив Бастауыш</title>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- jsPDF (нақты PDF генерациясы) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- STYLE БӨЛІМІ (БӨЛІМ 2 КЕЛЕСІ ЖАУАПТА) -->
+  <style>
+    /* ===== БАЗАЛЫҚ СТИЛЬДЕР ===== */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #fdf6e3; /* жұмсақ бежевый фон */
+    color: #333;
+}
+
+.wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* ===== HEADER ===== */
+header {
+    background-color: #e3dcd1; /* жеңіл бежевый */
+    padding: 20px 15px;
+    border-bottom: 2px solid #d1c7b5;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #222;
+}
+
+header .small {
+    font-size: 14px;
+    color: #555;
+}
+
+.nav-btn {
+    background-color: #d1c7b5;
+    border: none;
+    padding: 8px 12px;
+    margin: 2px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.nav-btn:hover {
+    background-color: #c2b59d;
+}
+
+/* ===== NAVIGATION ===== */
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 15px 0;
+    justify-content: center;
+}
+
+/* ===== PAGES ===== */
+.page {
+    display: none;
+    margin-bottom: 40px;
+}
+
+.page.active {
+    display: block;
+}
+
+/* ===== CARDS ===== */
+.card {
+    background-color: #fff8f0; /* бежевый карт */
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.hero {
+    text-align: center;
+}
+
+.hero .lead {
+    font-size: 16px;
+    color: #555;
+}
+
+.primary {
+    background-color: #d1bfa7;
+    border: none;
+    color: #222;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 4px;
+    transition: 0.2s;
+}
+
+.primary:hover {
+    background-color: #c0ad94;
+}
+
+.ghost {
+    background-color: transparent;
+    border: 2px solid #d1bfa7;
+    color: #222;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 4px;
+}
+
+.ghost:hover {
+    background-color: #f0e5d8;
+}
+
+/* ===== GRID ===== */
+.grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* ===== LESSONS ===== */
+.lesson-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.lesson-list div {
+    padding: 10px;
+    background-color: #f3e9dc;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.lesson-list div:hover {
+    background-color: #e3d8c5;
+}
+
+/* ===== GAME ===== */
+.quiz-box {
+    background-color: #fff8f0;
+    padding: 16px;
+    border-radius: 10px;
+    margin-top: 12px;
+}
+
+/* ===== TABLES ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 6px 8px;
+    border-bottom: 1px solid #dcd0c0;
+    text-align: left;
+}
+
+table th {
+    background-color: #e6d8c1;
+}
+
+/* ===== MODAL ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal .box {
+    background-color: #fff8f0;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background-color: #e3dcd1;
+    text-align: center;
+    padding: 15px;
+    border-top: 2px solid #d1c7b5;
+    font-size: 14px;
+    color: #555;
+}
+
+/* ===== SELECT, INPUTS ===== */
+input, select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #d1c7b5;
+    margin-bottom: 8px;
+    width: 100%;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width: 900px) {
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- ===== HEADER ===== -->
+    <header>
+      <div>
+        <h1>АКТ-Платформа — Бастауыш</h1>
+        <div class="small">Интерактив сабақтар • Цифрлық ойындар • PDF генерация • Мұғалім панелі</div>
+      </div>
+
+      <div class="center" style="gap:8px">
+        <button id="btnOpenRegister" class="nav-btn">Тіркелу / Кіру</button>
+        <button id="btnTeacherView" class="nav-btn">Мұғалім панелі</button>
+      </div>
+    </header>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav>
+      <button class="nav-btn" onclick="show('home')">Басты бет</button>
+      <button class="nav-btn" onclick="show('lessons')">Сабақтар</button>
+      <button class="nav-btn" onclick="show('game')">Интерактив ойын</button>
+      <button class="nav-btn" onclick="show('resources')">PDF ресурстар</button>
+      <button class="nav-btn" onclick="show('map')">Карта</button>
+      <button class="nav-btn" onclick="show('stats')">Статистика</button>
+    </nav>
+
+    <!-- ===== PAGE: HOME ===== -->
+    <section id="home" class="page active">
+      <div class="hero card">
+        <h2>Интерактив АКТ-платформа</h2>
+        <p class="lead">Бастауыш сынып оқушыларына арналған цифрлық ойындар, тесттер және мұғалімге арналған аналитика.</p>
+
+        <div style="margin-top:18px">
+          <button class="primary" onclick="show('game')">Ойынды бастау</button>
+          <button class="ghost" onclick="show('lessons')">Сабақтарды ашу</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div>
+          <div class="card">
+            <h3>Интерактив сабақтар</h3>
+            <p class="muted">Оқушыларға арналған мазмұн толық цифрлық форматта.</p>
+
+            <div id="lessonList" class="lesson-list"></div>
+          </div>
+
+          <div class="card" style="margin-top:12px">
+            <h3>Жаңалықтар</h3>
+            <p class="muted">Платформада жаңа ойындар мен тесттер қосылып жатыр.</p>
+          </div>
+        </div>
+
+        <aside class="card">
+          <h3>Пайдаланушы</h3>
+          <div id="currentUser" class="muted">Тіркелмеген</div>
+
+          <div style="margin-top:12px">
+            <button class="primary" onclick="openProfile()">Профиль</button>
+            <button class="ghost" onclick="logout()" id="btnLogout" style="display:none">Шығу</button>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===== PAGE: LESSONS ===== -->
+    <section id="lessons" class="page">
+      <div class="card">
+        <h3>Сабақтар тізімі</h3>
+        <p class="muted">Қажетті сабақты таңдаңыз</p>
+        <div id="lessonsContainer" class="lesson-list"></div>
+      </div>
+    </section>
+
+    <!-- ===== PAGE: GAME ===== -->
+    <section id="game" class="page">
+      <div class="card">
+        <h3>Интерактив ойын</h3>
+        <p class="muted">Ұпай жина, дұрыс жауапты таңда</p>
+
+        <div id="gameArea">
+          <div id="gameIntro">
+            <p>Қиындық деңгейін таңда:</p>
+            <button class="primary" onclick="startGame('easy')">Оңай</button>
+            <button class="primary" onclick="startGame('medium')">Орташа</button>
+            <button class="primary" onclick="startGame('hard')">Қиын</button>
+          </div>
+
+          <div id="gameBox" style="display:none" class="quiz-box"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PAGE: RESOURCES ===== -->
+    <section id="resources" class="page">
+      <div class="card">
+        <h3>PDF ресурстары</h3>
+        <p class="muted">jsPDF арқылы бірден PDF жасалып шығады</p>
+
+        <div class="row">
+          <button class="primary" onclick="createPDF('Мұғалімге арналған нұсқаулық')">Методикалық нұсқаулық (PDF)</button>
+          <button class="ghost" onclick="createPDF('Оқушыға арналған тапсырмалар')">Оқушы тапсырмалары (PDF)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PAGE: MAP ===== -->
+    <section id="map" class="page">
+      <div class="card">
+        <h3>Google картасы</h3>
+        <iframe style="width:100%;height:350px;border-radius:12px"
+                src="https://maps.google.com/maps?q=Astana&t=&z=12&ie=UTF8&iwloc=&output=embed"></iframe>
+      </div>
+    </section>
+
+    <!-- ===== PAGE: STATS ===== -->
+    <section id="stats" class="page">
+      <div class="grid">
+        <div class="card">
+          <h3>Мұғалім аналитикасы</h3>
+          <canvas id="chartResults" height="220"></canvas>
+        </div>
+
+        <aside class="card">
+          <h3>Оқушы нәтижелері</h3>
+
+          <select id="teacherFilter"></select>
+
+          <div style="max-height:260px;overflow:auto">
+            <table>
+              <thead><tr><th>Аты</th><th>Сынып</th><th>Ұпай</th><th>Деңгей</th></tr></thead>
+              <tbody id="studentRows"></tbody>
+            </table>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer>
+      © 2025 АКТ-Платформа — Интерактив білім беру жүйесі
+    </footer>
+
+  </div>
+
+  <!-- ===== MODAL ===== -->
+  <div id="modal" class="modal">
+    <div class="box">
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <!-- JS БӨЛІМІ (БӨЛІМ 3 КЕЛЕСІ ЖАУАПТА) -->
+  <script>
+    // ===== ЖАЛПЫ ЖАҒДАЙ =====
+let currentUser = null;
+let users = [];
+let lessons = [
+    {id:1, title:"Python тіліне кіріспе", file:"lessons/Python тіліне кіріспе.pdf"},
+    {id:2, title:"Ішкі бағдарламалар", file:"lessons/Ішкі бағдарламалар.pdf"},
+    {id:3, title:"Цикл", file:"lessons/Цикл.pdf"}
+];
+
+let studentResults = [];
+
+// ===== ФУНКЦИЯЛАР =====
+function show(pageId){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    const page = document.getElementById(pageId);
+    if(page) page.classList.add('active');
+}
+
+function updateUserDisplay(){
+    const el = document.getElementById('currentUser');
+    if(currentUser){
+        el.textContent = currentUser.name + " (" + currentUser.role + ")";
+        document.getElementById('btnLogout').style.display = 'inline-block';
+    } else {
+        el.textContent = "Тіркелмеген";
+        document.getElementById('btnLogout').style.display = 'none';
+    }
+}
+
+function logout(){
+    currentUser = null;
+    updateUserDisplay();
+    alert("Сіз шықтыңыз");
+}
+
+// ===== ТІРКЕЛУ / КІРУ =====
+document.getElementById('btnOpenRegister').onclick = function(){
+    const html = `
+    <h3>Тіркелу</h3>
+    <input id="regName" placeholder="Атыңыз" />
+    <p>Роль таңдаңыз:</p>
+    <button class="primary" onclick="registerUser('student')">Оқушы</button>
+    <button class="primary" onclick="registerUser('teacher')">Мұғалім</button>
+
+    <hr>
+
+    <h3>Кіру</h3>
+    <input id="loginName" placeholder="Атыңыз" />
+    <button class="primary" onclick="loginUser()">Кіру</button>
+    `;
+    openModal(html);
+}
+
+function registerUser(role){
+    const name = document.getElementById('regName').value.trim();
+    if(!name){ alert("Атыңызды толтырыңыз"); return; }
+    const user = {name, role};
+    users.push(user);
+    currentUser = user;
+    closeModal();
+    updateUserDisplay();
+    alert("Тіркелу сәтті аяқталды (" + role + ")");
+    populateLessons();
+    updateTeacherFilter();
+}
+
+function loginUser(){
+    const name = document.getElementById('loginName').value;
+    const user = users.find(u=>u.name===name);
+    if(user){
+        currentUser = user;
+        closeModal();
+        updateUserDisplay();
+        populateLessons();
+        updateTeacherFilter();
+    } else alert("Пайдаланушы табылмады");
+}
+
+// ===== MODAL =====
+function openModal(html){
+    const modal = document.getElementById('modal');
+    document.getElementById('modalContent').innerHTML = html;
+    modal.style.display = 'flex';
+}
+
+function closeModal(){
+    document.getElementById('modal').style.display = 'none';
+}
+
+window.onclick = function(e){
+    if(e.target.id==='modal') closeModal();
+}
+
+function populateLessons(){
+    const container = document.getElementById('lessonList');
+    container.innerHTML = '';
+    lessons.forEach(l=>{
+        const div = document.createElement('div');
+        div.textContent = l.title;
+        // Ескі alert кодын ауыстырамыз:
+        div.onclick = () => {
+            if(l.file){
+                window.open(l.file, "_blank"); // PDF жаңа терезеде ашылады
+            } else {
+                alert("Сабақ ашылды: " + l.title);
+            }
+        };
+        container.appendChild(div);
+    });
+
+    const lc = document.getElementById('lessonsContainer');
+    lc.innerHTML = '';
+    lessons.forEach(l=>{
+        const div = document.createElement('div');
+        div.textContent = l.title;
+        // Ескі alert кодын ауыстырамыз:
+        div.onclick = () => {
+            if(l.file){
+                window.open(l.file, "_blank"); // PDF жаңа терезеде ашылады
+            } else {
+                alert("Сабақ ашылды: " + l.title);
+            }
+        };
+        lc.appendChild(div);
+    });
+}
+
+
+// ===== GAME =====
+const questionsByLevel = {
+    easy: [
+        {q:"2+2=?", a:["3","4","5"], correct:1},
+        {q:"1+3=?", a:["2","4","5"], correct:1},
+        {q:"5-2=?", a:["2","3","4"], correct:1}
+    ],
+    medium: [
+        {q:"Python қандай тіл?", a:["Жоғары деңгейлі","Төмен деңгейлі","Орта"], correct:0},
+        {q:"for цикл нешеден басталады?", a:["0","1","2"], correct:0},
+        {q:"if шарт операторы қайда қолданылады?", a:["Логикалық тексеру","Цикл","Функция"], correct:0}
+    ],
+    hard: [
+        {q:"Python-да функция қалай жарияланады?", a:["def myFunc():","function myFunc():","func myFunc():"], correct:0},
+        {q:"Списокты қалай сұрыптаймыз?", a:["sort()","order()","arrange()"], correct:0},
+        {q:"Lambda функциясы қайда қолданылады?", a:["Жеңіл функциялар үшін","Үлкен код үшін","Тек класс ішінде"], correct:0}
+    ]
+};
+
+let gameState = {};
+
+function startGame(level){
+    if(!currentUser || currentUser.role!=="student"){
+        alert("Ойынды бастау үшін тіркеліңіз (student)");
+        return;
+    }
+    document.getElementById('gameIntro').style.display='none';
+    const box = document.getElementById('gameBox');
+    box.style.display='block';
+    
+    // Деңгейге сәйкес сұрақтарды алу
+    const questions = questionsByLevel[level] || [];
+    
+    gameState = {score:0,qIndex:0,level, questions};
+    renderQuestion();
+}
+
+function renderQuestion(){
+    const q = gameState.questions[gameState.qIndex];
+    if(!q){ endGame(); return;}
+    const box = document.getElementById('gameBox');
+    box.innerHTML = `<p>${q.q}</p>`+
+        q.a.map((ans,i)=>`<button class="primary" onclick="answer(${i})">${ans}</button>`).join('');
+}
+
+function answer(i){
+    const q = gameState.questions[gameState.qIndex];
+    if(i===q.correct) gameState.score++;
+    gameState.qIndex++;
+    renderQuestion();
+}
+
+function endGame(){
+    alert("Ойын аяқталды! Ұпай: "+gameState.score);
+    studentResults.push({name:currentUser.name,score:gameState.score,level:gameState.level,class:'1A'});
+    renderStudentResults();
+    document.getElementById('gameIntro').style.display='block';
+    document.getElementById('gameBox').style.display='none';
+}
+
+// ===== PDF GENERATION =====
+function createPDF(title){
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text(title, 20, 20);
+    doc.setFontSize(12);
+    doc.text("Бұл автоматты түрде генерацияланған PDF.", 20, 30);
+    doc.save(title+".pdf");
+}
+
+// ===== TEACHER PANEL =====
+function updateTeacherFilter(){
+    const sel = document.getElementById('teacherFilter');
+    sel.innerHTML = '';
+    users.filter(u=>u.role==='student').forEach(s=>{
+        const opt = document.createElement('option');
+        opt.value = s.name;
+        opt.textContent = s.name;
+        sel.appendChild(opt);
+    });
+    sel.onchange = renderStudentResults;
+}
+
+function renderStudentResults(){
+    const sel = document.getElementById('teacherFilter');
+    const name = sel.value;
+    const tbody = document.getElementById('studentRows');
+    tbody.innerHTML = '';
+    studentResults.forEach(r=>{
+        if(!name || r.name===name){
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${r.name}</td><td>${r.class}</td><td>${r.score}</td><td>${r.level}</td>`;
+            tbody.appendChild(tr);
+        }
+    });
+    renderChart();
+}
+
+// ===== CHART =====
+function renderChart(){
+    const ctx = document.getElementById('chartResults').getContext('2d');
+    const labels = studentResults.map(r=>r.name);
+    const data = studentResults.map(r=>r.score);
+    if(window.chartInstance) window.chartInstance.destroy();
+    window.chartInstance = new Chart(ctx,{
+        type:'bar',
+        data:{labels, datasets:[{label:'Ұпай',data,backgroundColor:'#d1bfa7'}]},
+        options:{responsive:true, scales:{y:{beginAtZero:true}}}
+    });
+}
+
+// ===== PROFILE =====
+function openProfile(){
+    if(!currentUser){ alert("Тіркелмеген"); return;}
+    const html = `<h3>Профиль</h3>
+    <p>Аты: ${currentUser.name}</p>
+    <p>Роль: ${currentUser.role}</p>
+    <button onclick="closeModal()">Жабу</button>`;
+    openModal(html);
+}
+
+// ===== INIT =====
+updateUserDisplay();
+populateLessons();
+updateTeacherFilter();
+
+  </script>
+
+</body>
+</html>
